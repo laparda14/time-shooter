@@ -45,6 +45,7 @@ export default class Player extends Container {
         const texture = utils.TextureCache['img/Shuttle.png']
         const sprite = new Sprite(texture)
         this.sprite = sprite
+        sprite.pivot = new Point(sprite.width / 2, sprite.height / 2)
 
         const cannonTexture = utils.TextureCache['img/Turret.png']
         this.cannon = new Sprite(cannonTexture)
@@ -52,7 +53,7 @@ export default class Player extends Container {
         this.cannon.pivot = new Point(this.cannon.width - 56, this.cannon.height / 2)
         this.cannon.x = this.cannon.width - 56
 
-        sprite.pivot = new Point(sprite.width / 2, sprite.height / 2)
+        this.spriteContainer.addChild(this.cannon)
 
         this.thruster = new AnimatedSprite([
             utils.TextureCache['img/Shuttle-Thruster-1.png'],
@@ -65,7 +66,6 @@ export default class Player extends Container {
         this.spriteContainer.addChild(this.thruster)
 
         this.spriteContainer.addChild(sprite)
-        this.spriteContainer.addChild(this.cannon)
 
         this.keys = {
             down: game.registerKey(83),
@@ -168,14 +168,13 @@ export default class Player extends Container {
         this.vx += Math.max(-1, Math.min(1, this.accelX))
         this.vy += Math.max(-1, Math.min(1, this.accelY))
         const theta = Math.atan2(this.vy, this.vx)
-        let dist = Math.sqrt(this.vx*this.vx + this.vy*this.vy)
+        const dist = Math.sqrt(this.vx * this.vx + this.vy * this.vy)
         this.vx = dist * Math.cos(theta)
         this.vy = dist * Math.sin(theta)
-        if (dist < 1) dist = 1
         const speed = this.boosting ? BOOST_SPEED : SPEED
         if (dist) {
-            const dx = Math.cos(theta) * speed * Math.abs(this.vx)
-            const dy = Math.sin(theta) * speed * Math.abs(this.vy)
+            const dx = speed * this.vx
+            const dy = speed * this.vy
             this.y += dy
             this.x += dx
         }
