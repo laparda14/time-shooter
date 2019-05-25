@@ -168,11 +168,17 @@ export default class Player extends Container {
         this.vx += Math.max(-1, Math.min(1, this.accelX))
         this.vy += Math.max(-1, Math.min(1, this.accelY))
         const theta = Math.atan2(this.vy, this.vx)
+        let dist = Math.sqrt(this.vx*this.vx + this.vy*this.vy)
+        this.vx = dist * Math.cos(theta)
+        this.vy = dist * Math.sin(theta)
+        if (dist < 1) dist = 1
         const speed = this.boosting ? BOOST_SPEED : SPEED
-        const dx = Math.cos(theta) * speed * Math.abs(this.vx)
-        const dy = Math.sin(theta) * speed * Math.abs(this.vy)
-        this.y += dy
-        this.x += dx
+        if (dist) {
+            const dx = Math.cos(theta) * speed * Math.abs(this.vx)
+            const dy = Math.sin(theta) * speed * Math.abs(this.vy)
+            this.y += dy
+            this.x += dx
+        }
         this.spriteContainer.rotation = theta
     }
 
