@@ -74,12 +74,13 @@ export default class Game {
     }
 
     loadTextures(callback) {
-        const textures = [...Player.TEXTURES, BulletLayer.TEXTURES]
+        const textures = [...Player.TEXTURES, ...BulletLayer.TEXTURES, ...World.TEXTURES]
         Loader.shared.add(textures).load(callback)
     }
 
     init() {
         this.world = new World(this)
+        this.app.stage.addChild(this.world)
         this.bulletLayer = new BulletLayer()
         this.app.stage.addChild(this.bulletLayer)
 

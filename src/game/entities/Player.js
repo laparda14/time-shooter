@@ -24,6 +24,8 @@ export default class Player extends Container {
         super()
         this.game = game
 
+        this.hitSize = 128
+
         this.vx = 0
         this.vy = 0
 
@@ -51,7 +53,7 @@ export default class Player extends Container {
         this.cannon = new Sprite(cannonTexture)
 
         this.cannon.pivot = new Point(this.cannon.width - 56, this.cannon.height / 2)
-        this.cannon.x = this.cannon.width - 56
+        this.cannon.x = this.cannon.width - 46
 
         this.spriteContainer.addChild(this.cannon)
 
@@ -179,6 +181,39 @@ export default class Player extends Container {
             this.x += dx
         }
         this.spriteContainer.rotation = theta
+        this.resolveWallCollision()
+    }
+
+    resolveWallCollision() {
+        let hitThing = false
+        do {
+            const x = this.x
+            const y = this.y
+            hitThing = false
+            let cell = this.game.world.getCell(this.game.world.getRow(y), this.game.world.getCol(x - this.hitSize / 2))
+            if (cell) {
+                this.x += 1
+                hitThing = true
+            }
+
+            cell = this.game.world.getCell(this.game.world.getRow(y), this.game.world.getCol(x + this.hitSize / 2))
+            if (cell) {
+                this.x -= 1
+                hitThing = true
+            }
+
+            cell = this.game.world.getCell(this.game.world.getRow(y - this.hitSize / 2), this.game.world.getCol(x))
+            if (cell) {
+                this.y += 1
+                hitThing = true
+            }
+
+            cell = this.game.world.getCell(this.game.world.getRow(y + this.hitSize / 2), this.game.world.getCol(x))
+            if (cell) {
+                this.y -= 1
+                hitThing = true
+            }
+        } while (hitThing)
     }
 
     destroy() {
